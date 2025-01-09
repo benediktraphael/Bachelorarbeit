@@ -34,8 +34,8 @@ def drawLines():
 
 #drawLines()
 
-pyautogui.moveTo(-1600,365)
-pyautogui.click()
+#pyautogui.moveTo(-1600,365)
+#pyautogui.click()
 
 #Hoch (bis auf 3)
 #pyautogui.moveTo(-1400,365) liegt auf der zweiten Linie von oben
