@@ -32,7 +32,7 @@ def drawLines():
         j = j+1
 
 
-#drawLines()
+drawLines()
 
 #pyautogui.moveTo(-1600,365)
 #pyautogui.click()

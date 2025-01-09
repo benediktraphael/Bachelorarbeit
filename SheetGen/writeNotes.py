@@ -1,7 +1,55 @@
 import math
 import pyautogui
 import time
-import clefCalculation
+#from clefCalculation import clefCalculation 
+
+
+def clefCalculation(clef, key):
+    '''
+        determines the calculation-array
+
+        Args:
+            key(int): number of accidentals (+ sharp, - flat); example: G major = +1
+            clef(int): MidiNumber of the note, which is on the center-line in the used clef
+        
+        Returns:
+            [](int): relative positions of Midis, which have accidentals
+            (int): The StartIndex, which black key is the next.
+            (int(bool)): natural or standard sign.(0 none, 1 sharp, -1 flat, 2 natural)
+
+    '''
+    #Steps from F to the black Notes in Order (Fis, Gis, Ais, Cis, Dis)
+    used_clef = [1,3,5,8,10]
+    #The movement, such it is relative to Center-Tone and not F.
+    match clef: 
+        case 71:#Treble
+            used_clef = [(a - 6) % 12 for a in used_clef]
+            startIndex = 3#Cis is the first accidental from H
+        case 50:#Bass
+            used_clef = [(a + 5) % 12 for a in used_clef]
+            startIndex = 4#Dis is the first accidental from D
+
+
+    #Order, in which sharps, flats effect them (1. Fis, 2. Cis, ...)
+    accidentals_order = [0,3,1,4,2]
+
+    #if there is an key, the changed white key needs a natural sign.
+    #0 means, standard sign. 1 means Changed, natural sign
+    accidentals = [0, 0, 0, 0, 0]
+
+
+    #flats, as means that a (one above) is now the outlieer
+    while(key < 0):
+        used_clef[accidentals_order[key]] += 1
+        key += 1
+        accidentals[accidentals_order[key]] = 1
+
+    while(key > 0):
+        used_clef[accidentals_order[key-1]] -= 1
+        key -= 1
+        accidentals[accidentals_order[key-1]] = 1
+
+    return (startIndex, used_clef, accidentals)
 
 #Ich erwarte eine Liste an Noten mit der Form
 #(Position (in 1/16), Ton(ohne Vorzeichen), Vorzeichen(null, b, #), Dauer (in 1/16)) 
@@ -20,9 +68,10 @@ import clefCalculation
 
     #these show the Order, in which the accidentals are changed. for Treble
 
+midiNotes = [(4, 60, 0), (4, 62, 0), (4, 64, 0), (4, 65, 0), (4, 67, 0), (4, 69, 0), (4, 71, 0), (4, 72, 0)]
 
 
-def processingMidiNumbers(key, clef, midiNotes):
+def processMidiNumbers(key, clef, midiNotes, midiDict):
     '''
         determines relative position of MidiNumber on sheet.
         I know afterwards, how every appearing midiNumber is represented on the sheet
@@ -38,12 +87,10 @@ def processingMidiNumbers(key, clef, midiNotes):
     '''
     
     #Run once
-    (startIndex, used_clef, accidentals) = clefCalculation.clefCalculation(clef, key)
+    (startIndex, used_clef, accidentals) = clefCalculation(clef, key)
 
-    
-    midiDict = {}
 
-    for midiNote in midiNotes:
+    for _,midiNote, _ in midiNotes:
         #already calculated
         if(midiNote in midiDict):
             continue
@@ -53,7 +100,7 @@ def processingMidiNumbers(key, clef, midiNotes):
         #The Calculation of the number of steps
         ###########
         acc = 0
-        
+        steps = 0
         shift = 0
         x = midiNote - clef
         while(x < 0):
@@ -63,7 +110,8 @@ def processingMidiNumbers(key, clef, midiNotes):
         i = startIndex
         while(used_clef[i] <= x):
             i = (i+1)%5
-            steps = x - i
+        
+        steps = x - (i-startIndex)%5
         #when it is a note not innate to the key
         if(x == used_clef[i]):
             acc = accidentals[i]
@@ -71,11 +119,11 @@ def processingMidiNumbers(key, clef, midiNotes):
                 steps -= 1#look inot my memos
             
         if(midiNote < clef):
-            steps = -7*shift
+            steps -= 7*shift
         ##############
         #End of Calculation
         ##############
-        writeNote(midiDict[midiNote])
+        midiDict[midiNote] = (steps, acc)
     return
 
 
@@ -115,6 +163,100 @@ def helperLines(steps):
     pyautogui.moveTo(pos.x, pos.y)
     return
 
+
+'''
+Ermitteln der Positionen (Wo sind die Pinsel?)
+Achtel
+    Hoch (-115, 140)
+    Tief (-80, 140)
+Halbe
+    Hoch (-45, 140)
+    Tief (-180, 175)
+Sechszehntel
+    Hoch (-150, 175)
+    Tief (-115, 175)
+Viertel
+    Hoch (-80, 175)
+    Tief (-45, 175)
+Zusatz
+    Hilfslinie (-180, 200)
+    Pinsel (-150, 200)
+    
+Speicher in Array an Index
+2 * log2(Länge (in Sechszehntel)) + (Tief?)  ... 2^x Sechszehntel lang
+    Bsp. Achtel Hoch = 2 * 1 + 0
+Wenn Pausen dazu kommen (3 * log + 0 (h) 1(tief) 2(pause))
+'''
+
+def writeSheetMusic(key, clef, midiNotes):
+
+    #constant how much do I move to the right for a 1/16th
+    #for 1/4 I move 4*width
+    note_width = 5
+
+
+    brushes = [(-150, 175), (-115, 175), (-115, 140), (-80, 140), (-80, 175), (-45, 175), (-45, 140), (-180, 175)]
+
+    '''
+    Zusatz
+    Hilfslinie (-180, 200)
+    Pinsel (-150, 200)
+    Vorzeichen
+    ...
+    Pausen
+    ...
+    '''
+    additional_brushes = [(-180, 200), (-150, 200)]
+
+
+    #preperation
+    midiDict = {}
+    processMidiNumbers(key, clef, midiNotes, midiDict)
+    #counts, how many width are left in this system
+    counter = 200
+    current_brush = -1
+    for note in midiNotes:
+        '''2 * log2(Länge (in Sechszehntel)) + (Tief?)'''
+        steps = midiDict[note[1]][0]
+        brush = int(2*math.log2(note[0]) + (1 if steps < 0 else 0))#Punktierte Noten fehlen noch
+
+        #select right brush
+        ''' if(brush != current_brush):
+            current_brush = brush
+            pos = pyautogui.position()
+            pyautogui.moveTo(brushes[brush])
+            pyautogui.click()
+            pyautogui.moveTo(pos)'''
+        
+        if(steps < 0):
+            y = -1 * (7 * int(steps/2) - (steps % 2) * 4)#da steps negativ
+        #Hoch, notes above the middle-line
+        else:
+            y = -1 * (7 * int(steps/2) + (steps % 2) * 3)
+        
+        pyautogui.moveRel(0, y)
+        pyautogui.click()
+        #move back and to next position
+        pyautogui.moveRel(10, -y)#note[0]*note_width
+        '''
+        Um auf die Mittellinie des x-ten 5-Zeilensystems zu kommen:
+            Hoch: y = 372+85x
+            Tief: y = 355+85x
+        '''
+        counter -= note[0]
+        if(counter <= 0):
+            #move to next system
+            pyautogui.moveRel(-1*(abs(counter) + 20)*note_width, 85)
+            
+
+
+
+    #Ich mache alle helperlines am ende
+    
+
+    return
+pyautogui.moveTo(-1500, 355+85)
+writeSheetMusic(0, 71, midiNotes)
 
 
 def writeNote(steps, acc):
