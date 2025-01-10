@@ -1,9 +1,9 @@
 import math
 import pyautogui
 import time
-from processMidiNumbers import p
+from processMidiNumbers import processMidiNumbers
 
-midiNotes = [(4, 60, 0), (4, 62, 0), (4, 64, 0), (4, 65, 0), (4, 67, 0), (4, 69, 0), (4, 71, 0), (4, 72, 0)]
+
 
 def helperLines(steps):
     '''
@@ -20,12 +20,16 @@ def helperLines(steps):
     pyautogui.moveTo(-180, 200)#helpLine-Brush
     pyautogui.click()
 
+    pyautogui.moveTo(pos)
+
+
     if(steps > 0):
-        pyautogui.moveTo(pos.x, pos.y-14)#move back to upper line
         v = -1
     else:
-        pyautogui.moveTo(pos.x, pos.y+14)#move back to lower line
         v = 1
+
+    #move to upper or lower line
+    pyautogui.moveRel(0, v*14)
 
     for i in range(0, abs(int(steps/2))-2):
         pyautogui.moveRel(0, v*7)
@@ -48,14 +52,29 @@ def writeSheetMusic(key, clef, midiNotes):
 
 
     '''constant x-shift per 1/16 and number of 1/16 per System'''
-    note_width = 5
+    note_width = 12
     counter = 200
     
+    '''
+    Wann liegen Hoch Tief auf der Mittellinie?
+        pyautogui.moveTo(x, 373) dann ist Hoch mittig
+        pyautogui.moveTo(x, 355) dann ist Tief mittig
+
+    Ergo:
+        Hoch-Offset: 23
+        Tief-Offset: 5
+    '''
+    high_offset = 9
+    low_offset = -9
+
+    '''bring mouse in the right position'''
+    pyautogui.moveTo(-1500, 364+85*3)
 
     for note in midiNotes:
+
+        steps = midiDict[note[1]][0]
         '''Brushes Index: 2 * log2(Länge (in Sechszehntel)) + (Tief?)'''
         brush = int(2*math.log2(note[0]) + (1 if steps < 0 else 0))#Punktierte Noten fehlen noch
-        steps = midiDict[note[1]][0]
 
 
         '''Select correct brush''' 
@@ -66,10 +85,10 @@ def writeSheetMusic(key, clef, midiNotes):
         
         '''Calculate y-shift'''
         if(steps < 0):
-            y = -1 * (7 * int(steps/2) - (steps % 2) * 4)
+            y = -1 * (7 * int(steps/2) - (steps % 2) * 4)+low_offset
 
         else:
-            y = -1 * (7 * int(steps/2) + (steps % 2) * 3)
+            y = -1 * (7 * int(steps/2) + (steps % 2) * 3)+high_offset
         
 
         '''Paint the Note and Helperlines'''
@@ -95,7 +114,11 @@ def writeSheetMusic(key, clef, midiNotes):
             
     return
 
-
+time.sleep(3)
+midiNotes = [(4, 60, 0), (4, 62, 0), (8, 64, 0), (4, 65, 0), (2, 67, 0), (2, 69, 0), (1, 71, 0), (1, 72, 0)]
+writeSheetMusic(0, 71, midiNotes)
+pyautogui.moveTo(-1000, 364)
+helperLines(-8)
 '''
 #Ich erwarte eine Liste an Noten mit der Form
 #(Position (in 1/16), Ton(ohne Vorzeichen), Vorzeichen(null, b, #), Dauer (in 1/16)) 
