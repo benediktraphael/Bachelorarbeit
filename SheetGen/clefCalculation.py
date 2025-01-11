@@ -10,7 +10,7 @@ def clefCalculation(clef, key):
         Returns:
             [5](int): relative positions of Midis, which have accidentals
             (int): The StartIndex, which black key is the next.
-            [5](int): which accidental for which midi 2: natural, 1: sharp, -1: flat 
+            [5](int): which accidental for which midi 2: natural, 3: sharp, 1: flat 
     '''
 
 
@@ -24,7 +24,7 @@ def clefCalculation(clef, key):
             used_clef = [(a - 6) % 12 for a in used_clef]
             startIndex = 3
         case 50:#Bass
-            used_clef = [(a + 5) % 12 for a in used_clef]
+            used_clef = [(a + 3) % 12 for a in used_clef]
             startIndex = 4
 
 
@@ -32,10 +32,10 @@ def clefCalculation(clef, key):
     accidentals_order = [0,3,1,4,2]
 
     '''what accidental does a midi get, if it is in used_clef?'''
-    '''2: natural, 1: sharp, -1: flat'''
-    accidentals = [1, 1, 1, 1, 1]
+    '''2: natural, 3: sharp, 1: flat'''
+    accidentals = [3,3,3,3,3]
     if(key < 0):
-        accidentals *= -1
+        accidentals -= 2
 
 
     '''In G-Major (key = 1): F# is the normal midi and F is the outlier, which needs special representation'''

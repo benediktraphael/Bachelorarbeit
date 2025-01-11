@@ -27,4 +27,4 @@ def drawLines():
         j = j+1
 
 
-#drawLines()
+drawLines()

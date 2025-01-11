@@ -41,6 +41,9 @@ def helperLines(steps):
 
 def writeSheetMusic(key, clef, midiNotes):
 
+    '''MidiNotes: length, MidiNumber'''
+
+
     '''Preparation'''
     midiDict = {}
     processMidiNumbers(key, clef, midiNotes, midiDict)
@@ -48,27 +51,46 @@ def writeSheetMusic(key, clef, midiNotes):
 
     '''Positions of brushes'''
     brushes = [(-150, 175), (-115, 175), (-115, 140), (-80, 140), (-80, 175), (-45, 175), (-45, 140), (-180, 175)]
-    additional_brushes = [(-180, 200), (-150, 200)]
+    additional_brushes = [(-180, 200), (-150, 200),(-80, 200),(-115,200),(-45, 200)]
+
+    #in additional brushes 1, 2, 3 from signs_index are the accidentals (b, natural sharp)
+    signs_index = 1
+
+    '''needed offset = 2*(accidental(b, natural, sharp)-1) + (steps < 0?)*1 RETHINK'''
+    signs_offsets = [-10, 7, -10, 10, -8, 10]
+
+#abstand x+10 ist gut
+#auflösen, hoch y-10 ist gut
+#auflösen, tief y+10 ist gut
+#b, tief y+7 ist gut
+#b hoch y-10 ist gut
+#KReuz hoch y-8 ist gut
+#Kreuz tief, y+10 ist gut
+   # B(-80, 200)
+# Auflösung(-115,200)
+  #  Kreuz(-45, 200)
+  #  Pausen
+
 
 
     '''constant x-shift per 1/16 and number of 1/16 per System'''
-    note_width = 12
+    note_width = 15
     counter = 200
     
     '''
-    Wann liegen Hoch Tief auf der Mittellinie?
+    Wann liegen Hoch Tief auf der Mittellinie (x, 364)?
         pyautogui.moveTo(x, 373) dann ist Hoch mittig
         pyautogui.moveTo(x, 355) dann ist Tief mittig
 
     Ergo:
-        Hoch-Offset: 23
-        Tief-Offset: 5
+        Hoch-Offset: 9
+        Tief-Offset: -9
     '''
     high_offset = 9
     low_offset = -9
 
     '''bring mouse in the right position'''
-    pyautogui.moveTo(-1500, 364+85*3)
+    pyautogui.moveTo(-1500, 364+85*1)
 
     for note in midiNotes:
 
@@ -77,20 +99,35 @@ def writeSheetMusic(key, clef, midiNotes):
         brush = int(2*math.log2(note[0]) + (1 if steps < 0 else 0))#Punktierte Noten fehlen noch
 
 
-        '''Select correct brush''' 
-        cur_pos = pyautogui.position()
-        pyautogui.moveTo(brushes[brush])
-        pyautogui.click()
-        pyautogui.moveTo(cur_pos)
-        
         '''Calculate y-shift'''
         if(steps < 0):
             y = -1 * (7 * int(steps/2) - (steps % 2) * 4)+low_offset
 
         else:
             y = -1 * (7 * int(steps/2) + (steps % 2) * 3)+high_offset
-        
 
+
+        '''has a sign'''
+        if(midiDict[note[1]][1] != 0):
+            '''select correct sign'''
+            cur_pos = pyautogui.position()
+            pyautogui.moveTo(additional_brushes[signs_index+midiDict[note[1]][1]])
+            pyautogui.click()
+            pyautogui.moveTo(cur_pos)
+            '''needed offset = 2*(accidental(b, natural, sharp)-1) + (steps < 0?)*1'''
+            sign_offset_index = 2 * (midiDict[note[1]][1]-1) + (1 if steps < 0 else 0)
+            sign_offset = signs_offsets[sign_offset_index]
+            pyautogui.moveRel(0, y+sign_offset)
+            pyautogui.click()
+            pyautogui.moveRel(10, -(y+sign_offset))
+
+        '''Select correct brush''' 
+        cur_pos = pyautogui.position()
+        pyautogui.moveTo(brushes[brush])
+        pyautogui.click()
+        pyautogui.moveTo(cur_pos)
+        
+        
         '''Paint the Note and Helperlines'''
         pyautogui.moveRel(0, y)
         pyautogui.click()
@@ -100,8 +137,10 @@ def writeSheetMusic(key, clef, midiNotes):
         
 
         '''shift on the x-axes'''
-        pyautogui.moveRel(note_width*note[0], 0)
+        x_shift = (1.5 ** int(math.log2(note[0])))*note_width #Experimenting on what looks nice
+        pyautogui.moveRel(x_shift, 0)
         counter -= note[0]
+
         '''move to next system'''
         if(counter <= 0):
             '''
@@ -115,31 +154,18 @@ def writeSheetMusic(key, clef, midiNotes):
     return
 
 time.sleep(3)
-midiNotes = [(4, 60, 0), (4, 62, 0), (8, 64, 0), (4, 65, 0), (2, 67, 0), (2, 69, 0), (1, 71, 0), (1, 72, 0)]
-writeSheetMusic(0, 71, midiNotes)
-pyautogui.moveTo(-1000, 364)
-helperLines(-8)
-'''
-#Ich erwarte eine Liste an Noten mit der Form
-#(Position (in 1/16), Ton(ohne Vorzeichen), Vorzeichen(null, b, #), Dauer (in 1/16)) 
-#Bsp. (8, C4, null, 4 ):
-#bedeutet: C4 wird 8/16 nach Begin (nach 2 viertel) für 4/16 (ein Viertel) gespielt.
-
-#Da ich eine Melodie erwarte, sollte es zu keiner Überlappung kommen.
-
-#pyautogui.moveTo(-1645,364)
-
-
-
-
-    #while clef(startIndex+i < Steps): i++
-    #Steps - (startIndex+i)%5
-
-    #these show the Order, in which the accidentals are changed. for Treble
-'''
+midiNotes = [(4, 60, 0), (4, 61, 0), (8, 64, 0), (4, 65, 0), (2, 67, 0), (2, 69, 0), (1, 71, 0), (1, 72, 0)]
+writeSheetMusic(0, 50, midiNotes)
 
 '''
-Ermitteln der Positionen (Wo sind die Pinsel?)
+Ich erwarte eine Liste an Noten mit der Form
+    (Dauer (in Sechszehntel), MidiNummber, ???)
+    Bsp. (4, Midi(C4), ???): C4 wird für 4/16 (ein Viertel) gespielt.
+
+Da ich eine Melodie erwarte, sollte es zu keiner Überlappung kommen.
+
+
+Pinselpositionen
 Achtel
     Hoch (-115, 140)
     Tief (-80, 140)
@@ -161,9 +187,11 @@ Zusatz
     ...
     
 Speicher in Array an Index
-2 * log2(Länge (in Sechszehntel)) + (Tief?)  ... 2^x Sechszehntel lang
-    Bsp. Achtel Hoch = 2 * 1 + 0
-Wenn Pausen dazu kommen (3 * log + 0 (h) 1(tief) 2(pause))
+    2 * log2(Länge (in Sechszehntel)) + 1 * (istTief?)
+    Bsp. Achtel Hoch = 2 * log2(2) + 0
+
+
+Wenn Pausen dazu kommen (3 * log + 0 (h) 1(tief) 2(pause))?#Idee
 '''
 
 ''' 
@@ -179,19 +207,4 @@ Wenn Pausen dazu kommen (3 * log + 0 (h) 1(tief) 2(pause))
 #pyautogui.moveTo(-1100,358) liegt zwischen der 3 und 4
 #pyautogui.moveTo(-1010,361) liegt auf der 4
 #y+7 ist auf/zwischen der nächsten Linie
-
-
-
-
-#Auf meinem zweiten Bildschirm (links) gehen die Positionen von (-1700,190) bis (-875, 1350)  (oben links bis unten rechts)
-
-#Der Punkt hat den Radius 2, ansonsten unverändert.
-#der DINA4-Zettel ist auf dem Bildschirm mit der Auflösung ? im Vollbild bei 33,33%
-
-#Point(x=-1308, y=873) auf diesen Punkt habe ich geklickt. (Viertel Hoch)
-#Point(x=-1308, y=822) auf diesem Punkt war der Kringel.
-#Rel(0,51) Wenn der Kringel an Stelle x stehen soll, muss ich relativ dazu klicken.
-
-#in meiner Standarteinstellung ist die Bewegung von Rel(1,1) für Gimp (3,3)
-#bedeutet, dass jeder Pixel in Python 3 Pixeln in Gimp entsprechen.
 '''

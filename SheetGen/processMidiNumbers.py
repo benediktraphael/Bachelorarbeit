@@ -32,15 +32,22 @@ def processMidiNumbers(key, clef, midiNotes, midiDict):
         steps = 0
         shift = 0
         x = midiNote - clef
-        #octave, until above center
+
+        #octave, until max one octave from center
         while(x < 0):
             shift += 1
             x += 12
+        while(x > 11):
+            shift -= 1
+            x -= 12
 
         #how many not innate midis are passed
         i = startIndex
-        while(used_clef[i] <= x):
-            i = (i+1)%5
+        if(max(used_clef) <= x):
+            i -= 1
+        else:
+            while(used_clef[i] < (x % 12)):
+                i = (i+1)%5
         
         steps = x - (i-startIndex)%5
 
@@ -54,6 +61,7 @@ def processMidiNumbers(key, clef, midiNotes, midiDict):
             
         #octave back
         steps -= 7*shift
+
 
         ##############
         #End of Calculation
