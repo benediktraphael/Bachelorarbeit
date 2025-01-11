@@ -27,4 +27,30 @@ def drawLines():
         j = j+1
 
 
-drawLines()
+
+def drawClefs(clef):
+    match clef:
+        case 71:
+            offset = 4
+            pyautogui.moveTo(-150, 250)
+
+        case 50:
+            offset = 0
+            pyautogui.moveTo(-180, 250)
+    #select Notenschlüssel
+    pyautogui.click()
+    pyautogui.moveTo(-1630, 364+offset)
+    
+    j = 0
+    while(j < 10):
+        pyautogui.click()
+        pyautogui.moveRel(0, 85)
+        j += 1
+    return
+
+
+def prepareSheet(clef):
+    drawLines()
+    drawClefs(clef)
+    return
+

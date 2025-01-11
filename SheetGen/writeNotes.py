@@ -1,8 +1,8 @@
 import math
 import pyautogui
 import time
+from Lines import prepareSheet
 from processMidiNumbers import processMidiNumbers
-
 
 
 def helperLines(steps):
@@ -154,8 +154,10 @@ def writeSheetMusic(key, clef, midiNotes):
     return
 
 time.sleep(3)
+prepareSheet(71)
+time.sleep(3)
 midiNotes = [(4, 60, 0), (4, 61, 0), (8, 64, 0), (4, 65, 0), (2, 67, 0), (2, 69, 0), (1, 71, 0), (1, 72, 0)]
-writeSheetMusic(0, 50, midiNotes)
+writeSheetMusic(0, 71, midiNotes)
 
 '''
 Ich erwarte eine Liste an Noten mit der Form
