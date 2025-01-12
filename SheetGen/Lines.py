@@ -27,7 +27,6 @@ def drawLines():
         j = j+1
 
 
-
 def drawClefs(clef):
     match clef:
         case 71:
@@ -49,8 +48,34 @@ def drawClefs(clef):
     return
 
 
-def prepareSheet(clef):
-    drawLines()
-    drawClefs(clef)
+def drawKey(key):
+    accidentals_order = [0,3,1,4,2]
+    used_clef = [1,3,5,8,10]
+    #b: auf Linie um zwischen Linie.
+    sharps = [-14, -4, -18, -7, 4]
+    flats = [-2, -20,-9,1,-13]
+    #select brush
+    if(key < 0):
+        pyautogui.moveTo(-80, 200)
+        used_acc = flats
+    else:
+        pyautogui.moveTo(-45, 200)
+        used_acc = sharps
+    pyautogui.click()
+
+    for j in range(0, 10):
+        pyautogui.moveTo(-1610, 364+85*j)
+        for i in range(0, key, (-1 if key < 0 else 1)):
+            pyautogui.moveRel(0, used_acc[i])
+            pyautogui.click()
+            pyautogui.moveRel(7, -used_acc[i])
     return
 
+
+def prepareSheet(clef, key):
+    drawLines()
+    drawClefs(clef)
+    drawKey(key)
+    return
+
+prepareSheet(71,3)

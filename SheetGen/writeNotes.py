@@ -90,7 +90,7 @@ def writeSheetMusic(key, clef, midiNotes):
     low_offset = -9
 
     '''bring mouse in the right position'''
-    pyautogui.moveTo(-1500, 364+85*1)
+    pyautogui.moveTo(-1600, 364+85*1)
 
     for note in midiNotes:
 
@@ -156,7 +156,7 @@ def writeSheetMusic(key, clef, midiNotes):
 time.sleep(3)
 prepareSheet(71)
 time.sleep(3)
-midiNotes = [(4, 60, 0), (4, 61, 0), (8, 64, 0), (4, 65, 0), (2, 67, 0), (2, 69, 0), (1, 71, 0), (1, 72, 0)]
+midiNotes = [(4, 72, 0), (4, 74, 0), (4, 76, 0), (4, 77, 0), (4, 79, 0), (4, 81, 0), (4, 83, 0), (4, 84, 0)]
 writeSheetMusic(0, 71, midiNotes)
 
 '''
