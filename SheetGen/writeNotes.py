@@ -5,6 +5,12 @@ from Lines import prepareSheet
 from processMidiNumbers import processMidiNumbers
 
 
+helperLineBrush = (-180, 200)
+
+'''Positions of brushes'''
+brushes = [(-150, 175), (-115, 175), (-115, 140), (-80, 140), (-80, 175), (-45, 175), (-45, 140), (-180, 175)]
+additional_brushes = [(-180, 200), (-150, 200),(-80, 200),(-115,200),(-45, 200)]
+
 def helperLines(steps):
     '''
     draws the helperlines for the note
@@ -17,7 +23,7 @@ def helperLines(steps):
     '''
 
     pos = pyautogui.position()
-    pyautogui.moveTo(-180, 200)#helpLine-Brush
+    pyautogui.moveTo(helperLineBrush)#helpLine-Brush
     pyautogui.click()
 
     pyautogui.moveTo(pos)
@@ -49,9 +55,7 @@ def writeSheetMusic(key, clef, midiNotes):
     processMidiNumbers(key, clef, midiNotes, midiDict)
     
 
-    '''Positions of brushes'''
-    brushes = [(-150, 175), (-115, 175), (-115, 140), (-80, 140), (-80, 175), (-45, 175), (-45, 140), (-180, 175)]
-    additional_brushes = [(-180, 200), (-150, 200),(-80, 200),(-115,200),(-45, 200)]
+
 
     #in additional brushes 1, 2, 3 from signs_index are the accidentals (b, natural sharp)
     signs_index = 1
@@ -154,10 +158,10 @@ def writeSheetMusic(key, clef, midiNotes):
     return
 
 time.sleep(3)
-prepareSheet(71)
+#prepareSheet(71, 0)
 time.sleep(3)
 midiNotes = [(4, 72, 0), (4, 74, 0), (4, 76, 0), (4, 77, 0), (4, 79, 0), (4, 81, 0), (4, 83, 0), (4, 84, 0)]
-writeSheetMusic(0, 71, midiNotes)
+#writeSheetMusic(0, 71, midiNotes)
 
 '''
 Ich erwarte eine Liste an Noten mit der Form
