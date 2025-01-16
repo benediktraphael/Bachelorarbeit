@@ -1,8 +1,22 @@
 from gimpfu import *
 
-def drawLines():
+def createImage():
+    width = 2480
+    height = 3508
+
+    new_image = gimp.Image(width, height, GRAY)
+    background = gimp.Layer(new_image, "Hintergrund", width, height, GRAY_IMAGE, 100, NORMAL_MODE)
+    background.fill(WHITE_FILL)
+    new_image.add_layer(background)
+    gimp.Display(new_image)
+    gimp.displays_flush()
+    return new_image
+
+
+def drawLines(image):
+    drawable = image.active_layer
     #Select Brush
-    pdb.gimp_context_set_brush("Zeilen-Pinsel")
+    pdb.gimp_context_set_brush("Noten-Linien")
 
     #Test how it looks
     x = 250
@@ -15,19 +29,18 @@ def drawLines():
         y += 7*24
     return
 
-def drawClefs(clef):
-
+def drawClefs(image, clef):
+    drawable = image.active_layer
     x = 300
     y = 548
 
     #need to check for offsets
-    match clef:
-        case 71:
-            offset = 0
-            pdb.gimp_context_set_brush("Zusatz-zSchlüssel_Violin")
-        case 50:
-            offset = 0
-            pdb.gimp_context_set_brush("Zusatz-zSchlüssel_Bass")
+    if(clef == 71):
+        offset = 0
+        pdb.gimp_context_set_brush("Zusatz-zSchluessel_Violin")
+    if(clef == 50):
+        offset = 0
+        pdb.gimp_context_set_brush("Zusatz-zSchluessel_Bass")
     
     for j in range(10):
         pdb.gimp_paintbrush_default(drawable, 2, [x, y])
@@ -35,7 +48,9 @@ def drawClefs(clef):
     return
 
 
-def drawKey(key):
+def drawKey(image, key):
+
+    drawable = image.active_layer
     accidentals_order = [0,3,1,4,2]
     used_clef = [1,3,5,8,10]
     
@@ -63,9 +78,8 @@ def drawKey(key):
 
 
 def prepareSheet(clef, key):
-    drawLines()
-    drawClefs(clef)
-    drawKey(key)
+    image = createImage()
+    drawLines(image)
+    drawClefs(image, clef)
+    drawKey(image, key)
     return
-
-
