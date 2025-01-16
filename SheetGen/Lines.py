@@ -1,88 +1,71 @@
-import pyautogui
-import time
+from gimpfu import *
 
-#Auf meinem zweiten Bildschirm (links) gehen die Positionen des Papiers von (-1700,190) bis (-875, 1350)  (oben links bis unten rechts)
+def drawLines():
+    #Select Brush
+    pdb.gimp_context_set_brush("Zeilen-Pinsel")
 
-#Der Punkt hat den Radius 2, ansonsten unverändert.
-#der DINA4-Zettel ist auf dem Bildschirm mit der Auflösung ? im Vollbild bei 33,33%
+    #Test how it looks
+    x = 250
+    y = 500
 
+    for j in range(10):
+        for i in range(5):
+            pdb.gimp_paintbrush_default(drawable, 4, [x,y, 2250, y])
+            y += 24
+        y += 7*24
+    return
 
-#clefs = []
-#keys = []
-#lineBrush = (-150, 200)
-#lineStart = (-1645,350)
-#lineLength = 715
-#systemHeight = 35
+def drawClefs(clef):
 
-def drawLines(lineBrush, lineStart, lineLength, systemHeight):
-    
-    pyautogui.moveTo(lineBrush)
-    pyautogui.click()
-    pyautogui.moveTo(lineStart)
+    x = 300
+    y = 548
 
-    j = 0
-    while(j < 10):
-
-        i = 0
-        while(i < 5):
-            pyautogui.mouseDown()
-            pyautogui.moveRel(lineLength,0)
-            pyautogui.mouseUp()
-            pyautogui.moveRel(-1*lineLength, systemHeight/5)
-            i = i+1
-
-        pyautogui.moveRel(0, 1.5*systemHeight)
-        j = j+1
-
-
-def drawClefs(clef, clefs, lineStart, systemHeight):
+    #need to check for offsets
     match clef:
         case 71:
             offset = 0
-            pyautogui.moveTo(clefs[1])
-
+            pdb.gimp_context_set_brush("Zusatz-zSchlüssel_Violin")
         case 50:
             offset = 0
-            pyautogui.moveTo(clefs[0])
-    pyautogui.click()
-    pyautogui.moveTo(lineStart[0]+4, lineStart[1]+int(2/5*systemHeight)+offset)
+            pdb.gimp_context_set_brush("Zusatz-zSchlüssel_Bass")
     
-    j = 0
-    while(j < 10):
-        pyautogui.click()
-        pyautogui.moveRel(0, 2.25*systemHeight)
-        j += 1
+    for j in range(10):
+        pdb.gimp_paintbrush_default(drawable, 2, [x, y])
+        y += 12*24
     return
 
 
-def drawKey(key, keys, lineStart, systemHeight):
+def drawKey(key):
     accidentals_order = [0,3,1,4,2]
     used_clef = [1,3,5,8,10]
-    #b: auf Linie um zwischen Linie.
-    sharps = [-14, -4, -18, -7, 4]
-    flats = [-2, -20,-9,1,-13]
-    #select brush
+    
+
+    sharps = [-14, -4, -18, -7, 4]#Ausmessen
+    flats = [-2, -20,-9,1,-13]#Ausmessen
+    
     if(key < 0):
-        pyautogui.moveTo(keys[0])
+        pdb.gimp_context_set_brush("Zusatz-Vorzeichen-b")
         used_acc = flats
     else:
-        pyautogui.moveTo(keys[1])
+        pdb.gimp_context_set_brush("Zusatz-Vorzeichen-Kreuz")
         used_acc = sharps
-    pyautogui.click()
 
-    for j in range(0, 10):
-        pyautogui.moveTo(lineStart[0] + 10, lineStart[1]+2/5*systemHeight+2.5*systemHeight*j)
+    x = 350
+    y = 548
+
+    for j in range(10):
+
         for i in range(0, key, (-1 if key < 0 else 1)):
-            pyautogui.moveRel(0, used_acc[i])
-            pyautogui.click()
-            pyautogui.moveRel(1/5*systemHeight, -used_acc[i])
+           pdb.gimp_paintbrush_default(drawable, 2, [x, y+used_acc[i]])
+        
+        y += 12*24
     return
 
 
-def prepareSheet(clef, key, lineBrush, lineLength, systemHeight, lineStart, clefs, keys):
-    drawLines(lineBrush, lineStart, lineLength, systemHeight)
-    drawClefs(clef, clefs, lineStart, systemHeight)
-    drawKey(key, keys, lineStart, systemHeight)
+def prepareSheet(clef, key):
+    drawLines()
+    drawClefs(clef)
+    drawKey(key)
     return
 
 
