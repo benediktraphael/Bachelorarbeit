@@ -38,19 +38,19 @@ def drawLines(lineBrush, lineStart, lineLength, systemHeight):
 def drawClefs(clef, clefs, lineStart, systemHeight):
     match clef:
         case 71:
-            offset = 4
+            offset = 0
             pyautogui.moveTo(clefs[1])
 
         case 50:
             offset = 0
             pyautogui.moveTo(clefs[0])
     pyautogui.click()
-    pyautogui.moveTo(lineStart[0]+4, lineStart[1]+2/5*systemHeight+offset)
+    pyautogui.moveTo(lineStart[0]+4, lineStart[1]+int(2/5*systemHeight)+offset)
     
     j = 0
     while(j < 10):
         pyautogui.click()
-        pyautogui.moveRel(0, 2.5*systemHeight)
+        pyautogui.moveRel(0, 2.25*systemHeight)
         j += 1
     return
 

@@ -7,9 +7,7 @@ from processMidiNumbers import processMidiNumbers
 
 helperLineBrush = (-180, 200)
 
-'''Positions of brushes'''
-brushes = [(-150, 175), (-115, 175), (-115, 140), (-80, 140), (-80, 175), (-45, 175), (-45, 140), (-180, 175)]
-additional_brushes = [(-180, 200), (-150, 200),(-80, 200),(-115,200),(-45, 200)]
+
 
 def helperLines(steps):
     '''
@@ -45,7 +43,7 @@ def helperLines(steps):
     return
 
 
-def writeSheetMusic(key, clef, midiNotes):
+def writeSheetMusic(key, clef, midiNotes, brushes, additional_brushes, startPos, lineSpace):
 
     '''MidiNotes: length, MidiNumber'''
 
@@ -55,7 +53,9 @@ def writeSheetMusic(key, clef, midiNotes):
     processMidiNumbers(key, clef, midiNotes, midiDict)
     
 
-
+    #'''Positions of brushes'''
+    #brushes = [(-150, 175), (-115, 175), (-115, 140), (-80, 140), (-80, 175), (-45, 175), (-45, 140), (-180, 175)]
+    #additional_brushes = [(-180, 200), (-150, 200),(-80, 200),(-115,200),(-45, 200)]
 
     #in additional brushes 1, 2, 3 from signs_index are the accidentals (b, natural sharp)
     signs_index = 1
@@ -78,8 +78,8 @@ def writeSheetMusic(key, clef, midiNotes):
 
 
     '''constant x-shift per 1/16 and number of 1/16 per System'''
-    note_width = 15
-    counter = 200
+    note_width = 15 * lineSpace/7
+    counter = 100 * lineSpace/7
     
     '''
     Wann liegen Hoch Tief auf der Mittellinie (x, 364)?
@@ -90,12 +90,13 @@ def writeSheetMusic(key, clef, midiNotes):
         Hoch-Offset: 9
         Tief-Offset: -9
     '''
-    high_offset = 9
-    low_offset = -9
+    high_offset = 1.5 * lineSpace
+    low_offset = 1.5 * lineSpace
 
     '''bring mouse in the right position'''
-    pyautogui.moveTo(-1600, 364+85*1)
-
+    pyautogui.moveTo(startPos)
+    pyautogui.click()
+    return
     for note in midiNotes:
 
         steps = midiDict[note[1]][0]
@@ -105,10 +106,10 @@ def writeSheetMusic(key, clef, midiNotes):
 
         '''Calculate y-shift'''
         if(steps < 0):
-            y = -1 * (7 * int(steps/2) - (steps % 2) * 4)+low_offset
+            y = -1 * (lineSpace * int(steps/2) - (steps % 2) * math.ceil(lineSpace/2))+low_offset
 
         else:
-            y = -1 * (7 * int(steps/2) + (steps % 2) * 3)+high_offset
+            y = -1 * (lineSpace * int(steps/2) + (steps % 2) *math.floor(lineSpace/2))+high_offset
 
 
         '''has a sign'''
@@ -152,8 +153,8 @@ def writeSheetMusic(key, clef, midiNotes):
                 Hoch: y = 372+85x
                 Tief: y = 355+85x
             '''
-            pyautogui.moveRel(-1*(abs(counter) + 20)*note_width, 85)
-            counter = 200
+            pyautogui.moveRel(-1*(abs(counter) + 20)*note_width, 11.25*lineSpace)
+            counter = 100 * lineSpace/7
             
     return
 
