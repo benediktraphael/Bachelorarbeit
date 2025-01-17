@@ -1,6 +1,6 @@
 import math
 from Lines import prepareSheet
-from gimpfu import *
+from gimpfu import * # type: ignore
 from processMidiNumbers import processMidiNumbers
 
 
@@ -22,10 +22,10 @@ def helperLines(steps, cur_pos, image):
     
     (x,y) = cur_pos
     drawable = image.active_layer
-    pdb.gimp_context_set_brush("Zusatz-Hilfslinie")
+    pdb.gimp_context_set_brush("Zusatz-Hilfslinie") # type: ignore
 
     for i in range(0, abs(int(steps/2))-2):
-        pdb.gimp_paintbrush_default(drawable, 2, [x, y+v*(48+24*(i+1))])
+        pdb.gimp_paintbrush_default(drawable, 2, [x, y+v*(48+24*(i+1))]) # type: ignore
 
     return
 
@@ -85,16 +85,16 @@ def writeSheetMusic(key, clef, midiNotes, image):
         if(midiDict[note[1]][1] != 0):
             sign_brush = sign_brushes[midiDict[note[1]][1]]
             sign_offset = sign_offsets[midiDict[note[1]][1]] - 12*steps
-            pdb.gimp_context_set_brush(sign_brush)
-            pdb.gimp_paintbrush_default(drawable, 2, [x, y+sign_offset])
+            pdb.gimp_context_set_brush(sign_brush) # type: ignore
+            pdb.gimp_paintbrush_default(drawable, 2, [x, y+sign_offset]) # type: ignore
 
 
         '''Select correct brush'''
-        pdb.gimp_context_set_brush(brushes[brush])
+        pdb.gimp_context_set_brush(brushes[brush]) # type: ignore
         
         
         '''Paint the Note and Helperlines'''
-        pdb.gimp_paintbrush_default(drawable, 2, [x, y+y_shift])
+        pdb.gimp_paintbrush_default(drawable, 2, [x, y+y_shift]) # type: ignore
 
         if(steps > 5 or steps < -5):
             helperLines(steps, (x,y), image)
@@ -109,5 +109,5 @@ def writeSheetMusic(key, clef, midiNotes, image):
             x = 500
             y += 12*24
 
-    gimp.Display(image)
+    gimp.Display(image) # type: ignore
     return

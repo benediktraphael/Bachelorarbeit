@@ -7,12 +7,12 @@ def main():
     
     print("Guten Tag...")
     print("Nennen Sie bitte den Dateinamen von der Datei, die realisiert werden soll...\n")
-    filename = raw_input()
+    filename = raw_input()# type: ignore
     midiNotes = Read(filename)
     print("In welchem Notenschluessel soll das Stueck realisiert werden? \n 71: Violinschluessel \n 50: Bassschluessel \n")
-    clef_string = (raw_input())
+    clef_string = (raw_input()) # type: ignore
     print("In welcher Tonart soll das Stueck realisiert werden?\n Anzahl Kreuze \n oder -1 * Anzahl b's\n")
-    key_string = (raw_input())
+    key_string = (raw_input())# type: ignore
 
 
     clef = int(clef_string)
