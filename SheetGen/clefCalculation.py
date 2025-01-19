@@ -19,13 +19,13 @@ def clefCalculation(clef, key):
 
     '''Shift, such relative to center-Midi of clef
         startIndex shows, which accidental is on the closest right of the new center-Midi'''
-    match clef: 
-        case 71:#Treble
-            used_clef = [(a - 6) % 12 for a in used_clef]
-            startIndex = 3
-        case 50:#Bass
-            used_clef = [(a + 3) % 12 for a in used_clef]
-            startIndex = 4
+    
+    if(clef ==71):#Treble
+        used_clef = [(a - 6) % 12 for a in used_clef]
+        startIndex = 3
+    else:#Bass
+        used_clef = [(a + 3) % 12 for a in used_clef]
+        startIndex = 4
 
 
     '''Order, in which sharps, flats effect them (1. Fis, 2. Cis, ...)(backwards for flats)'''
@@ -35,7 +35,7 @@ def clefCalculation(clef, key):
     '''2: natural, 3: sharp, 1: flat'''
     accidentals = [3,3,3,3,3]
     if(key < 0):
-        accidentals -= 2
+        accidentals = [x - 2 for x in accidentals]
 
 
     '''In G-Major (key = 1): F# is the normal midi and F is the outlier, which needs special representation'''
