@@ -22,7 +22,7 @@ def helperLines(steps, cur_pos, image):
     
     (x,y) = cur_pos
     drawable = image.active_layer
-    pdb.gimp_context_set_brush("Zusatz-Hilfslinie") # type: ignore
+    pdb.gimp_context_set_brush("Hilfslinie") # type: ignore
 
     for i in range(0, abs(int(steps/2))-2):
         pdb.gimp_paintbrush_default(drawable, 2, [x, y+v*(48+24*(i+1))]) # type: ignore
@@ -54,9 +54,9 @@ def writeSheetMusic(key, clef, midiNotes, image):
     '''Brushes Index: 2 * log2(Length (in Sechszehntel)) + (Tief?)'''
     brushes = ["Sechszehntel-Hoch","Sechzehntel-Tief", "Achtel-Hoch", "Achtel-Tief", "Viertel-Hoch", "Viertel-Tief", "Halbe-Hoch", "Halbe-Tief"]
     
-    sign_brushes = ["x", "Zusatz-Vorzeichen-b", "Zusatz-Vorzeichen-Aufloesung", "Zusatz-Vorzeichen-Kreuz"]
+    sign_brushes = ["x", "Vorzeichen-b", "Vorzeichen-Aufloesung", "Vorzeichen-Kreuz"]
     sign_offsets = [0, -8, 0, 0]
-
+    x_sign_offsets = [0, -8, -32, -32]
     high_offset = 27
     low_offset = -27
 
@@ -85,8 +85,9 @@ def writeSheetMusic(key, clef, midiNotes, image):
         if(midiDict[note[1]][1] != 0):
             sign_brush = sign_brushes[midiDict[note[1]][1]]
             sign_offset = sign_offsets[midiDict[note[1]][1]] - 12*steps
+            x_sign_offset = x_sign_offsets[midiDict[note[1]][1]]
             pdb.gimp_context_set_brush(sign_brush) # type: ignore
-            pdb.gimp_paintbrush_default(drawable, 2, [x, y+sign_offset]) # type: ignore
+            pdb.gimp_paintbrush_default(drawable, 2, [x+sign_offset+x_sign_offset, y+sign_offset]) # type: ignore
 
 
         '''Select correct brush'''
@@ -101,13 +102,20 @@ def writeSheetMusic(key, clef, midiNotes, image):
         
 
         '''shift on the x-axes'''
-        x += note_width # check, what looks nice
+        x += int(note_width* (1.5 ** math.log(note[0], 2))) # check, what looks nice
 
 
         '''move to start of next system'''
         if(x >= 2150):
             x = 500
             y += 12*24
+            if(y > 3200):
+                #last system of the page is full
+                return#maybe change later on?
 
     gimp.Display(image) # type: ignore
     return
+
+
+import math
+print()

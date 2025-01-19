@@ -38,10 +38,10 @@ def drawClefs(image, clef):
     #need to check for offsets
     if(clef == 71):
         offset = 12
-        pdb.gimp_context_set_brush("Zusatz-zSchluessel_Violin") # type: ignore
+        pdb.gimp_context_set_brush("Schluessel_Violin") # type: ignore
     if(clef == 50):
         offset = -8
-        pdb.gimp_context_set_brush("Zusatz-zSchluessel_Bass") # type: ignore
+        pdb.gimp_context_set_brush("Schluessel_Bass") # type: ignore
     
     for j in range(10):
         pdb.gimp_paintbrush_default(drawable, 2, [x, y+offset]) # type: ignore
@@ -60,12 +60,12 @@ def drawKey(image, key, clef):
     
 
     if(key < 0):
-        pdb.gimp_context_set_brush("Zusatz-Vorzeichen-b") # type: ignore
+        pdb.gimp_context_set_brush("Vorzeichen-b") # type: ignore
         used_acc = flats
         offset = -8
         width = 10
     else:
-        pdb.gimp_context_set_brush("Zusatz-Vorzeichen-Kreuz") # type: ignore
+        pdb.gimp_context_set_brush("Vorzeichen-Kreuz") # type: ignore
         used_acc = sharps
         offset = 0
         width = 30
