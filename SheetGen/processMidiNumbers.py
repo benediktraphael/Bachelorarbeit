@@ -56,7 +56,7 @@ def processMidiNumbers(key, clef, midiNotes, midiDict):
         if(x == used_clef[i]):
             acc = accidentals[i]
             #if it is a sharp, (look at piano)
-            if(key >= 0):
+            if(key >= 0 and acc != 2):
                 steps -= 1
             
         #octave back

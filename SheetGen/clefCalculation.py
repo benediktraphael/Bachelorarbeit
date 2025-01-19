@@ -43,14 +43,14 @@ def clefCalculation(clef, key):
     '''flats: represented like midi+1 (Ab looks like A)'''
     while(key < 0):
         used_clef[accidentals_order[key]] += 1
-        key += 1
         accidentals[accidentals_order[key]] = 2
+        key += 1
 
     '''sharps: represented like midi-1 (G# looks like G)'''
     while(key > 0):
         used_clef[accidentals_order[key-1]] -= 1
-        key -= 1
         accidentals[accidentals_order[key-1]] = 2
+        key -= 1
 
 
     return (startIndex, used_clef, accidentals)

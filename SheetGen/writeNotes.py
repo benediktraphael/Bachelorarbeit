@@ -56,7 +56,7 @@ def writeSheetMusic(key, clef, midiNotes, image):
     
     sign_brushes = ["x", "Vorzeichen-b", "Vorzeichen-Aufloesung", "Vorzeichen-Kreuz"]
     sign_offsets = [0, -8, 0, 0]
-    x_sign_offsets = [0, -8, -32, -32]
+    x_sign_offsets = [0, -8, -4, -32]
     high_offset = 27
     low_offset = -27
 
@@ -72,7 +72,6 @@ def writeSheetMusic(key, clef, midiNotes, image):
     '''note = (length, Midinr, ???)'''
 
     for note in midiNotes:
-
         steps = midiDict[note[1]][0]
         
         brush = int(2*math.log(note[0],2) + (1 if steps < 0 else 0))
@@ -115,7 +114,3 @@ def writeSheetMusic(key, clef, midiNotes, image):
 
     gimp.Display(image) # type: ignore
     return
-
-
-import math
-print()
