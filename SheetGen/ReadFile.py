@@ -13,6 +13,3 @@ def Read(filename):
     
     
     return data
-
-
-print(Read("file.txt"))
