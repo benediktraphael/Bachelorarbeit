@@ -2,15 +2,17 @@
 
 def Read(filename):
     
-    return [(4, 72, 0), (4, 73, 0), (4, 76, 0), (4, 77, 0), (4, 79, 0), (4, 81, 0), (4, 83, 0), (4, 84, 0), (4, 72, 0), (4, 73, 0), (4, 76, 0), (4, 77, 0), (4, 79, 0), (4, 81, 0), (4, 83, 0), (4, 84, 0), (4, 72, 0), (4, 73, 0), (4, 76, 0), (4, 77, 0), (4, 79, 0), (4, 81, 0), (4, 83, 0), (4, 84, 0), (4, 72, 0), (4, 73, 0), (4, 76, 0), (4, 77, 0), (4, 79, 0), (4, 81, 0), (4, 83, 0), (4, 84, 0), (4, 72, 0), (4, 73, 0), (4, 76, 0), (4, 77, 0), (4, 79, 0), (4, 81, 0), (4, 83, 0), (4, 84, 0)]
     with open(filename, "r") as file:
         lines = file.readlines()
 
     data = []
     for line in lines:
-        line = line.strip().strip("()")
+        line = line.replace(" ", "").replace("(", "").replace(")", "").replace("\n", "").strip(",")
         x, y, z = map(float, line.split(","))
         data.append((x, y, z))
     
     
-    return datad
+    return data
+
+
+print(Read("file.txt"))
