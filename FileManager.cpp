@@ -1,12 +1,8 @@
-#include <fstream>
-#include <iostream>
 #include "FileManager.hpp"
-
 
 
 std::vector<double> reader(std::string fileName) {
 
-    std::cout << "Reader..." << std::endl;
     std::string filePath =fileName + ".txt";
 
     std::vector<double> dataPoints;
@@ -21,7 +17,6 @@ std::vector<double> reader(std::string fileName) {
         return dataPoints;
     }
 
-
     double point;
     while (!inFile.eof()) {
         inFile >> point;
@@ -29,18 +24,13 @@ std::vector<double> reader(std::string fileName) {
     }
 
     inFile.close();
-    std::cout << "Reader finished...";
     return dataPoints;
 }
 
-//outFile.open(filePath, std::ofstream::app) to append.
 
-void writer(std::vector<std::complex<double>> data, std::string fileName) {
+void writerSpectralKernels(std::vector<std::complex<double>> data, std::string fileName) {
 
 
-    
-
-    std::cout << "Writing..." << std::endl;
     std::string filePath =fileName + ".txt";
 
     std::ofstream outFile;
@@ -53,6 +43,30 @@ void writer(std::vector<std::complex<double>> data, std::string fileName) {
 
     for (int i = 0; i < data.size(); i++) {
         outFile << data.at(i) << std::endl;
+    }
+
+
+    outFile.close();
+    return;
+}
+
+
+void writer(std::vector<FinishedNotes> data, std::string fileName) {
+
+    std::string filePath = "../Projects/" + fileName + "_rd.txt";
+
+    std::ofstream outFile;
+    outFile.open(filePath);
+
+    if (outFile.fail()) {
+        std::cout << "Fehler beim öffnen der Datei " + fileName << filePath << std::endl;
+        return;
+    }
+
+    for (int i = 0; i < data.size(); i++) {
+        
+        std::string note = "(" + std::to_string(data[i].noteValue) + "," + std::to_string(data[i].midi) + "," + "0)";
+        outFile << note  << std::endl;
     }
 
 

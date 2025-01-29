@@ -1,7 +1,17 @@
+#pragma once
 #include <vector>
-#include <ccomplex>
+#include <complex>
+#include <cmath>
+#include "createWindow.hpp"
+
+struct SpectralKernel {
+	std::vector<std::complex<double>> specVals;
+	int startPoint;
+};
 
 
-std::tuple<std::vector<std::vector<std::complex<double>>>, std::vector<int>> spectralKernels(double f_min= 27.50, int k_num=88);
+std::vector<SpectralKernel> calculate_spectralKernels(double f_0=27.5, int k_num=88);
+
+SpectralKernel clipSpectralKernel(std::vector<std::complex<double>> spectralKernel);
+
 std::vector<std::complex<double>> FFTcq(std::vector<std::complex<double>> data);
-std::tuple<int, std::vector<std::complex<double>>> clipSpectralKernel(std::vector<std::complex<double>> spectralKernel);
