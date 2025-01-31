@@ -31,4 +31,3 @@ def main():
 
     print("Auf Wiedersehen!")
     return
-
