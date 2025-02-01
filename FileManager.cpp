@@ -3,7 +3,7 @@
 
 std::vector<double> reader(std::string fileName) {
 
-    std::string filePath =fileName + ".txt";
+    std::string filePath ="../Projects/" + fileName + ".txt";
 
     std::vector<double> dataPoints;
 
@@ -13,7 +13,7 @@ std::vector<double> reader(std::string fileName) {
     inFile.open(filePath);
 
     if (inFile.fail()) {
-        std::cout << "Fehler beim öffnen der Datei " + fileName << std::endl;
+        std::cout << "Fehler beim Ã¶ffnen der Datei " + fileName << std::endl;
         return dataPoints;
     }
 
@@ -37,7 +37,7 @@ void writerSpectralKernels(std::vector<std::complex<double>> data, std::string f
     outFile.open(filePath);
 
     if (outFile.fail()) {
-        std::cout << "Fehler beim öffnen der Datei " + fileName << filePath << std::endl;
+        std::cout << "Fehler beim Ã¶ffnen der Datei " + fileName << filePath << std::endl;
         return;
     }
 
@@ -59,7 +59,7 @@ void writer(std::vector<FinishedNotes> data, std::string fileName) {
     outFile.open(filePath);
 
     if (outFile.fail()) {
-        std::cout << "Fehler beim öffnen der Datei " + fileName << filePath << std::endl;
+        std::cout << "Fehler beim Ã¶ffnen der Datei " + fileName << filePath << std::endl;
         return;
     }
 
